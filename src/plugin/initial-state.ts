@@ -7,9 +7,9 @@
  */
 
 import i18nDefaultSettings from "./i18n/default-settings";
-import { LocalizationState } from "./types";
+import { LocalizationPluginState } from "./types";
 
-const initialState: LocalizationState = {
+const initialState: LocalizationPluginState = {
   language: "",
   ...i18nDefaultSettings,
 };

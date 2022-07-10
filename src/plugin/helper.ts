@@ -20,19 +20,19 @@ import { TFunction } from "react-i18next";
  *
  */
 export const updateTitle = ({
-  routeKey,
+  key,
   appName,
   ns,
   tFunction,
 }: {
-  routeKey?: string;
+  key?: string;
   ns?: string;
   appName?: string;
   tFunction: TFunction;
 }) => {
   let name = appName ? appName.trim() : null;
 
-  let title = routeKey && ns ? tFunction(routeKey, { ns }).trim() : "";
+  let title = key && ns ? tFunction(key, { ns }).trim() : "";
 
   const pageTitle = `${name || ""} ${name && title ? "-" : ""} ${title || ""}`;
 

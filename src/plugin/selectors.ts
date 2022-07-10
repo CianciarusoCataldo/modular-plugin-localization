@@ -2,7 +2,7 @@ import { ModularEngineGlobalState } from "modular-engine-types";
 
 import { createModularSelector } from "modular-utils";
 
-import { LocalizationState } from "./types";
+import { LocalizationPluginState } from "./types";
 import i18nDefaultSettings from "./i18n/default-settings";
 import localizationInitialState from "./initial-state";
 
@@ -15,8 +15,8 @@ import localizationInitialState from "./initial-state";
  *
  */
 export const getLocalizationConfig = (
-  state: ModularEngineGlobalState<{ localization?: LocalizationState }>
-): LocalizationState =>
+  state: ModularEngineGlobalState<{ localization?: LocalizationPluginState }>
+): LocalizationPluginState =>
   state.localization || { ...localizationInitialState, ...i18nDefaultSettings };
 
 /**

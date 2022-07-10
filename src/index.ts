@@ -7,3 +7,10 @@ export {
   getLanguage,
   getLanguages,
 } from "./plugin/selectors";
+
+export {
+  i18nSettings,
+  LocalizationPlugin,
+  LocalizationPluginSettings,
+  LocalizationPluginState,
+} from "./plugin/types";

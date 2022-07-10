@@ -45,7 +45,7 @@ const localization: LocalizationPlugin = () => {
         callBack = (t) => {
           updateTitle({
             tFunction: t,
-            routeKey: config.router.initialRouteKey,
+            key: config.router.initialRouteKey,
             ns,
             appName: inputConfig.appName,
           });
@@ -60,7 +60,7 @@ const localization: LocalizationPlugin = () => {
       enabledPlugins.router &&
         inputConfig.router.onLocationChange.push((path, routeKey) => {
           updateTitle({
-            routeKey,
+            key: routeKey,
             ns,
             appName: inputConfig.appName,
             tFunction: i18nInstance.t,
@@ -81,7 +81,7 @@ const localization: LocalizationPlugin = () => {
                   callback: (t) =>
                     enabledPlugins.router &&
                     updateTitle({
-                      routeKey: state.router.routeKey,
+                      key: state.router.routeKey,
                       tFunction: t,
                       appName: state.config.appName,
                       ns: state.localization.titlesNamespace,

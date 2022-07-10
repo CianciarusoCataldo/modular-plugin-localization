@@ -19,13 +19,13 @@ import {
  * @copyright Cataldo Cianciaruso 2022
  *
  */
-export type LocalizationState = ModularEngineCustomState<
+export type LocalizationPluginState = ModularEngineCustomState<
   {
     language: string;
   } & i18nSettings
 >;
 
-export type LocalizationSettings = {
+export type LocalizationPluginSettings = {
   i18n?: i18nSettings;
 };
 
@@ -38,4 +38,4 @@ export type i18nSettings = ModularEngineCustomState<{
   titlesNamespace: string | null;
 }>;
 
-export type LocalizationPlugin = ModularEnginePlugin<LocalizationSettings>;
+export type LocalizationPlugin = ModularEnginePlugin<LocalizationPluginSettings>;
