@@ -1,5 +1,5 @@
 /**
- * @file `localization` plugins types definitions
+ * @file [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) types definitions
  *
  * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
  *
@@ -12,7 +12,11 @@ import {
 } from "modular-engine-types";
 
 /**
- * `localization` state slice
+ * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) state slice
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
  *
  * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
  *
@@ -22,14 +26,29 @@ import {
 export type LocalizationPluginState = ModularEngineCustomState<
   {
     language: string;
-  } & i18nSettings
+  } & LocalizationPluginI18nSettings
 >;
 
 export type LocalizationPluginSettings = {
-  i18n?: i18nSettings;
+  i18n?: LocalizationPluginI18nSettings;
 };
 
-export type i18nSettings = ModularEngineCustomState<{
+/**
+ * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) [i18n](https://www.i18next.com/) 
+ * settings type definitions
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
+ *
+ * @see https://www.i18next.com/
+ *
+ * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
+ *
+ * @copyright Cataldo Cianciaruso 2022
+ *
+ */
+export type LocalizationPluginI18nSettings = ModularEngineCustomState<{
   fallbackLanguage: string;
   supportedLanguages: string[];
   namespaces: string[];
@@ -38,4 +57,19 @@ export type i18nSettings = ModularEngineCustomState<{
   titlesNamespace: string | null;
 }>;
 
-export type LocalizationPlugin = ModularEnginePlugin<LocalizationPluginSettings>;
+/**
+ * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) type definitions
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
+ *
+ * @see https://www.i18next.com/
+ *
+ * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
+ *
+ * @copyright Cataldo Cianciaruso 2022
+ *
+ */
+export type LocalizationPlugin =
+  ModularEnginePlugin<LocalizationPluginSettings>;

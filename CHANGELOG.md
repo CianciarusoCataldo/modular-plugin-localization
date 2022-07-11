@@ -2,6 +2,7 @@
 
 ## Versions
 
+- [0.2.0](#020)
 - [0.1.0](#010)
 
 <br>
@@ -10,6 +11,14 @@
 
 ## Changes
 
+<br>
+
+### 0.2.0
+
+- Code splitting
+- Deps updated
+- more tree-shakeable code
+- Better docs
 
 <br>
 

@@ -1,10 +1,18 @@
 /**
- * @file `localization` plugin helper functions
+ * @file [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) helpers file
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
+ *
+ * @see https://www.i18next.com/
  *
  * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
  *
  * @copyright Cataldo Cianciaruso 2022
+ *
  */
+
 
 import { TFunction } from "react-i18next";
 

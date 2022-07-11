@@ -9,7 +9,7 @@ export {
 } from "./plugin/selectors";
 
 export {
-  i18nSettings,
+  LocalizationPluginI18nSettings,
   LocalizationPlugin,
   LocalizationPluginSettings,
   LocalizationPluginState,

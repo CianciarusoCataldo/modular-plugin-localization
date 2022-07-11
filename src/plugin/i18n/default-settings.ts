@@ -1,15 +1,15 @@
-import { i18nSettings } from "../types";
+import { LocalizationPluginI18nSettings } from "../types";
 
 /**
- * `localization` plugin slice initial state (default configuration)
+ * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) slice initial i18next configuration (default)
  *
- * @see https://github.com/CianciarusoCataldo/modular-engine/#configuration
+ * @see https://github.com/CianciarusoCataldo/modular-engine/
  *
  * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
  *
  * @copyright Cataldo Cianciaruso 2022
  */
-const i18nDefaultSettings: i18nSettings = {
+const i18nDefaultSettings: LocalizationPluginI18nSettings = {
   debug: false,
   fallbackLanguage: "en",
   supportedLanguages: ["en"],

@@ -1,3 +1,18 @@
+/**
+ * @file [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) init file
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
+ *
+ * @see https://www.i18next.com/
+ *
+ * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
+ *
+ * @copyright Cataldo Cianciaruso 2022
+ *
+ */
+
 /** utils */
 import { computeValue, fillObject } from "modular-utils";
 
@@ -11,7 +26,43 @@ import { updateTitle } from "./helper";
 import * as actions from "./actions";
 import localizationReducer from "./reducer";
 
-const localization: LocalizationPlugin = () => {
+/**
+ * Improve [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) system with a fully working localization system, with multi-language support, based on [118next](https://www.i18next.com/)
+ *
+ * @returns `localization` plugin
+ *
+ * @example <caption> Basic scenario - custom localization settings inside engine.config.js/ts file .</caption>
+ *
+ * const localizationPlugin = require("modular-plugin-localization");
+ *
+ * const config = {
+ *   appName: "custom-app",
+ *   plugins: [localizationPlugin],
+ *   localization: {
+ *     namespaces: ["custom", "common"],
+ *     debug: false,
+ *     fallbackLanguage: "en",
+ *     supportedLanguages: ["en"],
+ *     defaultNamespace: "",
+ *     loadPath: "/custom-locales/{{lng}}/{{ns}}.json",
+ *     titlesNamespace: "titles",
+ *  },
+ * };
+ *
+ * module.exports = { config };
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-plugin-localization
+ *
+ * @see https://github.com/CianciarusoCataldo/modular-engine
+ *
+ * @see https://www.i18next.com/
+ *
+ * @author Cataldo Cianciaruso <https://github.com/CianciarusoCataldo>
+ *
+ * @copyright Cataldo Cianciaruso 2022
+ *
+ */
+const localizationPlugin: LocalizationPlugin = () => {
   const language =
     computeValue(() => navigator.language.split("-")[0], "") || "";
 
@@ -21,21 +72,21 @@ const localization: LocalizationPlugin = () => {
       slice: "localization",
       effects: localizationReducer,
       initialState: {
-        ...config.i18n,
+        ...config.localization,
         language,
       },
     }),
     create: (config) => ({
-      field: "i18n",
+      field: "localization",
       content: fillObject({
-        toFill: config.i18n,
+        toFill: config.localization,
         defaultObj: i18nDefaultSettings,
       }),
     }),
 
     format: (config, enabledPlugins) => {
       let inputConfig = config || {};
-      let i18n = inputConfig.i18n || i18nDefaultSettings;
+      let i18n = inputConfig.localization || i18nDefaultSettings;
 
       const ns = i18n.titlesNamespace || "";
 
@@ -52,10 +103,7 @@ const localization: LocalizationPlugin = () => {
         };
       }
 
-      initi18n({
-        config: { ...i18n, language },
-        callBack,
-      });
+      initi18n({ ...i18n, language }, callBack);
 
       enabledPlugins.router &&
         inputConfig.router.onLocationChange.push((path, routeKey) => {
@@ -111,4 +159,4 @@ const localization: LocalizationPlugin = () => {
   };
 };
 
-export default localization;
+export default localizationPlugin;
