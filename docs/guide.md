@@ -1,19 +1,17 @@
-# modular-plugin-modal
+# modular-plugin-localization
 
-![NPM](https://img.shields.io/npm/l/modular-plugin-modal?label=License&style=for-the-badge)
-![npm](https://img.shields.io/npm/v/modular-plugin-modal?color=orange%20&label=Latest%20version&style=for-the-badge&logo=npm)
-![npm bundle size](https://img.shields.io/bundlephobia/min/modular-plugin-modal?label=Package%20size&style=for-the-badge)
+![NPM](https://img.shields.io/npm/l/modular-plugin-localization?label=License&style=for-the-badge)
+![npm](https://img.shields.io/npm/v/modular-plugin-localization?color=orange%20&label=Latest%20version&style=for-the-badge&logo=npm)
+![npm bundle size](https://img.shields.io/bundlephobia/min/modular-plugin-localization?label=Package%20size&style=for-the-badge)
 ![Maintenance](https://img.shields.io/maintenance/yes/2025?label=Maintained&style=for-the-badge)
 
 ---
 
 <br>
 
-Manage your web app modal with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) system
+Improve [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) system with a fully working localization system, with multi-language support, based on [118next](https://www.i18next.com/)
 
 <br>
-
-
 
 ---
 
@@ -23,29 +21,34 @@ Manage your web app modal with [modular-engine](https://github.com/CianciarusoCa
 
 ### Installation
 
+Check [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) guide to init the system
+
 If you want to use this plugin with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine), install it:
 
 ```sh
-npm i modular-plugin-modal
+npm i modular-plugin-localization
 ```
 
 <br>
 
 ### Usage
 
-Check [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) guide to init the system
-
-Include this plugin inside your modular-engine config file, optionally with `modal` field set, to customize onModalOpen and onModalClose callbacks:
+Include this plugin inside your modular-engine config file, and optionally set the `localization` field as an object, with the plugin settings:
 
 ```tsx
-const { modalPlugin } = require("modular-plugin-modal");
+const localizationPlugin = require("modular-plugin-localization");
 
 const config = {
   appName: "custom-app",
-  plugins: [modalPlugin],
-  modal: {
-    onModalClose: [() => alert("modal closed")],
-    onModalOpen: [() => alert("modal opened")],
+  plugins: [localizationPlugin],
+  localization: {
+    namespaces: ["custom", "common"],
+    debug: false,
+    fallbackLanguage: "en",
+    supportedLanguages: ["en"],
+    defaultNamespace: "",
+    loadPath: "/custom-locales/{{lng}}/{{ns}}.json",
+    titlesNamespace: null,
   },
 };
 
@@ -54,33 +57,35 @@ module.exports = { config };
 
 <br>
 
-Then you can drive your modal component (in this example it is used [Modular-ui-components](https://github.com/CianciarusoCataldo/modular-ui-components) modal), with selectors:
+Create a json file, following the same path structure specified with `loadPath` parameter. For example, using this `loadPath`:
+
+```
+/locales/{{lng}}/{{ns}}
+```
+
+the localization instance will search for copies, starting from the `public` folder, inside `locales` folder, using actual `language` (`{{lng}}`) and used `namespace` (`{{ns}}`) to determine where to find the correct json file. So, you need a json file for each namespace, for each language. Check https://github.com/i18next/i18next-http-backend#backend-options for details. For completeness, this is a valid json, that need to be located inside `<public_folder>/locales/en/custom.json`:
+
+```json
+{
+  "custom_key": "Hey, this is a localized copy !"
+}
+```
+
+Then you can retrieve it, with localization hooks, inside your components:
 
 ```tsx
-import { isModalVisible, getModalType } from "modular-plugin-modal";
-import { Modal } from "modular-ui-components";
-
-const forms = {
-  formOne: () => <div>Form one</div>,
-  formTwo: () => <div>Form two</div>,
-};
+import { useTranslation } from "react-i18next";
 
 export const CustomComponent = () => {
-  const isVisible = useSelectors(isModalVisible);
-  const type = useSelectors(getModalType);
-  const Content = forms[type] || () => <div/>;
+  const { t } = useTranslation("custom");
 
   return (
-    <Modal hide={!isVisible}>
-      <Content />
-    </Modal>
+    <div>
+      <span>{t("custom_key")}</span>
+    </div>
   );
 };
 ```
-
-<br>
-
----
 
 ## API
 
@@ -88,47 +93,42 @@ With the plugin itself, some other useful selectors and actions are exported by 
 
 ### Actions
 
-| Action creator    | Arguments                                                                                                       | Effect                                                                                                     |
-| ----------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `openModal`       | - `type`: modal form type to open <br>- `context` : (optional) custom data associated with the given modal form | Open the modal, and optionally set the actual context                                                      |
-| `closeModal`      | /                                                                                                               | Close the modal, and reset the context                                                                     |
-| setModalContext   | - `context` : custom modal context to set                                                                       | (similar to openModa and closeModal, but doesn't affect the visibility or the form type)                   |
-| setModalForm      | - `type` : modal form type to set                                                                               | Set modal form type (similar to openModa and closeModal, but doesn't affect the context or the visibiity)  |
-| setModalVisiblity | - `visibility` : modal visibility to set                                                                        | Set modal visibility (similar to openModa and closeModal, but doesn't affect the context or the form type) |
+| Action creator   | Arguments                 | Effect                 |
+| ---------------- | ------------------------- | ---------------------- |
+| `changeLanguage` | - `lang`: language to set | Change actual language |
 
 <br>
 
 Import them from this lib:
 
 ```tsx
-import {
-  closeModal,
-  openModal,
-  setModalContext,
-  setModalForm,
-  setModalVisiblity,
-} from "modular-plugin-modal";
+import { changeLanguage } from "modular-plugin-localization";
 ```
 
 Then dispatch them from any part of your app:
 
 ```tsx
-import { isModalVisible, getModalType } from "modular-plugin-modal";
+import { changeLanguage } from "modular-plugin-localization";
+
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "modular-ui-components";
 
-export const ModalButton = () => {
+export const LanguageButton = () => {
   const dispatch = useDispatch();
 
   return (
-    <Button
-      onClick={() => {
-        dispatch(openModal("formOne"));
-      }}
-    >
-      Open form one
-    </Button>
+    <div>
+      {["es", "it", "en", "de"].forEach((lang) => (
+        <Button
+          onClick={() => {
+            dispatch(changeLanguage(lang));
+          }}
+        >
+          {lang}
+        </Button>
+      ))}
+    </div>
   );
 };
 ```
@@ -137,12 +137,11 @@ export const ModalButton = () => {
 
 ### Selectors
 
-| Selectors         | Returns                                                                          |
-| ----------------- | -------------------------------------------------------------------------------- |
-| `getModalView`    | Modal state, or default state if not enabled                                     |
-| `getModalType`    | Modal type, that can be used as a key to find the right component to show        |
-| `getModalContext` | Modal context, a custom object associated to the actual modal type (can be null) |
-| `isModalVisible`  | Modal visibility, to determine when show or hide the Modal component             |
+| Selectors               | Returns                                             |
+| ----------------------- | --------------------------------------------------- |
+| `getLocalizationConfig` | Localization state, or default state if not enabled |
+| `getLanguage`           | Actual language                                     |
+| `getLanguages`          | Supported languages                                 |
 
 <br>
 
@@ -150,40 +149,30 @@ Import them from this lib:
 
 ```tsx
 import {
-  getModalContext,
-  getModalType,
-  getModalView,
-  isModalVisible,
-} from "modular-plugin-modal";
+  getLocalizationConfig,
+  getLanguage,
+  getLanguages,
+} from "modular-plugin-localization";
 ```
 
 Then use them from any part of your app:
 
 ```tsx
-import { isModalVisible, getModalType } from "modular-plugin-modal";
+import { getLanguage, getLanguages } from "modular-plugin-localization";
 import { useSelector } from "react-redux";
 
-import { Button } from "modular-ui-components";
-
-export const ModalDebugComponent = () => {
-  const type = useSelector(getModalType);
-  const isVisible = useSelector(isModalVisible);
+export const LocalizationDebugComponent = () => {
+  const language = useSelector(getLanguage);
+  const languages = useSelector(getLanguages);
 
   return (
     <div>
-      <p>{`Actual form type is set to ${type}`}</p>
-      <p>{{`Modal is ${isVisible?"opened":"closed"}`}}</p>
-  </div>
+      <p>{`Actual language is ${language}`}</p>
+      <p>{`Supported languages are ${languages}`}</p>
+    </div>
   );
 };
 ```
-
-| Selectors       | Returns                                                                          |
-| --------------- | -------------------------------------------------------------------------------- |
-| getModalView    | Modal state, or default state if not enabled                                     |
-| getModalType    | Modal type, that can be used as a key to find the right component to show        |
-| getModalContext | Modal context, a custom object associated to the actual modal type (can be null) |
-| isModalVisible  | Modal visibility, to determine when show or hide the Modal component             |
 
 <br>
 
@@ -191,23 +180,19 @@ export const ModalDebugComponent = () => {
 
 ## Integration with other plugins
 
-- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, just check the `enabledPlugins` parameter inside your `format` function for `modal`. If true, you can add your callbacks to `modal` field, that contains 2 fields:
+- If you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the language you want to set. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
 
-  - onModallClose : callbacks called everytime the modal is closed
-  - onModalOpen : callbacks called everytime the modal is opened
-
-  <br>
-
-- Additionally, if you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can open the modal directly from URL, with query parameters, by passing the `modal` parameter with the form type you want to open. Try it with [modular-engine]() playground - https://cianciarusocataldo.github.io/modular-engine?modal=TestModal
-  <br>
+<br>
 
 ---
 
 ## Included libraries
 
+- [118next](https://www.i18next.com/) - the localization system used under the hood
 - [Modular-engine-types](https://github.com/CianciarusoCataldo/modular-engine-types) - to use modular-engine type definitions inside the plugin
 - [Modular-engine-tools](https://github.com/CianciarusoCataldo/modular-engine-tools) - to use modular-engine utils functions, to easily work with it
-- Modular-plugin-modal is written entirely with [Typescript](https://www.typescriptlang.org/)
+- [Modular-utils](https://github.com/CianciarusoCataldo/modular-utils) - to use shared util functions during init process
+- Modular-plugin-localization is written entirely with [Typescript](https://www.typescriptlang.org/)
 
 <br>
 

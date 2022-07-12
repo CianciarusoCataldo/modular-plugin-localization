@@ -30,7 +30,7 @@ export type LocalizationPluginState = ModularEngineCustomState<
 >;
 
 export type LocalizationPluginSettings = {
-  i18n?: LocalizationPluginI18nSettings;
+  localization?: LocalizationPluginI18nSettings;
 };
 
 /**

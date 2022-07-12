@@ -1,6 +1,6 @@
 {
   "name": "modular-plugin-localization",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Improve modular-engine system with a fully working localization system, with multilanguage support, based on 118next",
   "author": "Cataldo Cianciaruso",
   "license": "MIT",

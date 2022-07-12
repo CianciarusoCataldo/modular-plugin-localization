@@ -119,15 +119,14 @@ With the plugin itself, some other useful selectors and actions are exported by 
 Import them from this lib:
 
 ```tsx
-import { changeLanguage } from "modular-plugin-modal";
+import { changeLanguage } from "modular-plugin-localization";
 ```
 
 Then dispatch them from any part of your app:
 
 ```tsx
-import { changeLanguage } from "modular-plugin-modal";
+import { changeLanguage } from "modular-plugin-localization";
 
-import { isModalVisible, getModalType } from "modular-plugin-modal";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "modular-ui-components";
@@ -167,40 +166,32 @@ Import them from this lib:
 
 ```tsx
 import {
-  getModalContext,
-  getModalType,
-  getModalView,
-  isModalVisible,
-} from "modular-plugin-modal";
+  getLocalizationConfig,
+  getLanguage,
+  getLanguages,
+} from "modular-plugin-localization";
 ```
 
 Then use them from any part of your app:
 
 ```tsx
-import { isModalVisible, getModalType } from "modular-plugin-modal";
+import { getLanguage, getLanguages } from "modular-plugin-localization";
 import { useSelector } from "react-redux";
 
 import { Button } from "modular-ui-components";
 
-export const ModalDebugComponent = () => {
-  const type = useSelector(getModalType);
-  const isVisible = useSelector(isModalVisible);
+export const LocalizationDebugComponent = () => {
+  const language = useSelector(getLanguage);
+  const languages = useSelector(getLanguages);
 
   return (
     <div>
-      <p>{`Actual form type is set to ${type}`}</p>
-      <p>{{`Modal is ${isVisible?"opened":"closed"}`}}</p>
-  </div>
+      <p>{`Actual language is ${language}`}</p>
+      <p>{`Supported languages are ${languages}`}</p>
+    </div>
   );
 };
 ```
-
-| Selectors       | Returns                                                                          |
-| --------------- | -------------------------------------------------------------------------------- |
-| getModalView    | Modal state, or default state if not enabled                                     |
-| getModalType    | Modal type, that can be used as a key to find the right component to show        |
-| getModalContext | Modal context, a custom object associated to the actual modal type (can be null) |
-| isModalVisible  | Modal visibility, to determine when show or hide the Modal component             |
 
 <br>
 
@@ -208,14 +199,13 @@ export const ModalDebugComponent = () => {
 
 ## Integration with other plugins
 
-- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, just check the `enabledPlugins` parameter inside your `format` function for `modal`. If true, you can add your callbacks to `modal` field, that contains 2 fields:
+- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, just check the `enabledPlugins` parameter inside your `format` function for `localization`. If true, you can add your callbacks to `localization` field, that contains 1 field:
 
-  - onModallClose : callbacks called everytime the modal is closed
-  - onModalOpen : callbacks called everytime the modal is opened
+  - onLanguageChange : callbacks called everytime the language is changed
 
 <br>
 
-- Additionally, if you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the form type you want to open. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
+- Additionally, if you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the language you want to set. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
 
 <br>
 
