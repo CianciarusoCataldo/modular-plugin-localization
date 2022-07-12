@@ -1,0 +1,9 @@
+- [Documentation](guide "Modular-plugin-localization - documentation")
+- [Changelog](changelog "Modular-plugin-localization - changelog")
+- **Links**
+- [Github](https://github.com/cianciarusocataldo/modular-plugin-localization)
+- [NPM](https://www.npmjs.com/package/modular-plugin-localization)
+- **Modular ecosystem**
+- [Modular-engine](https://github.com/cianciarusocataldo/modular-engine)
+- [Modular-ui-components](https://github.com/cianciarusocataldo/modular-ui-components)
+- [Modular-creator](https://github.com/cianciarusocataldo/modular-creator)

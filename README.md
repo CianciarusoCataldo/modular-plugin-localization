@@ -20,7 +20,10 @@ Improve [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) s
 - [Getting started](#getting-started)
   - [Installation](#installation)
   - [Usage](#usage)
-- [Tests](#tests)
+- [API](#api)
+  - [Actions](#actions)
+  - [Selectors](#selectors)
+- [Integration with other plugins](#integration-with-other-plugins)
 - [Included libraries](#included-libraries)
 - [Authors](#authors)
 - [License](#license)
@@ -100,6 +103,119 @@ export const CustomComponent = () => {
   );
 };
 ```
+
+## API
+
+With the plugin itself, some other useful selectors and actions are exported by this lib, to easily work with any component
+
+### Actions
+
+| Action creator   | Arguments                 | Effect                 |
+| ---------------- | ------------------------- | ---------------------- |
+| `changeLanguage` | - `lang`: language to set | Change actual language |
+
+<br>
+
+Import them from this lib:
+
+```tsx
+import { changeLanguage } from "modular-plugin-modal";
+```
+
+Then dispatch them from any part of your app:
+
+```tsx
+import { changeLanguage } from "modular-plugin-modal";
+
+import { isModalVisible, getModalType } from "modular-plugin-modal";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Button } from "modular-ui-components";
+
+export const LanguageButton = () => {
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      {["es", "it", "en", "de"].forEach((lang) => (
+        <Button
+          onClick={() => {
+            dispatch(changeLanguage(lang));
+          }}
+        >
+          {lang}
+        </Button>
+      ))}
+    </div>
+  );
+};
+```
+
+<br>
+
+### Selectors
+
+| Selectors               | Returns                                             |
+| ----------------------- | --------------------------------------------------- |
+| `getLocalizationConfig` | Localization state, or default state if not enabled |
+| `getLanguage`           | Actual language                                     |
+| `getLanguages`          | Supported languages                                 |
+
+<br>
+
+Import them from this lib:
+
+```tsx
+import {
+  getModalContext,
+  getModalType,
+  getModalView,
+  isModalVisible,
+} from "modular-plugin-modal";
+```
+
+Then use them from any part of your app:
+
+```tsx
+import { isModalVisible, getModalType } from "modular-plugin-modal";
+import { useSelector } from "react-redux";
+
+import { Button } from "modular-ui-components";
+
+export const ModalDebugComponent = () => {
+  const type = useSelector(getModalType);
+  const isVisible = useSelector(isModalVisible);
+
+  return (
+    <div>
+      <p>{`Actual form type is set to ${type}`}</p>
+      <p>{{`Modal is ${isVisible?"opened":"closed"}`}}</p>
+  </div>
+  );
+};
+```
+
+| Selectors       | Returns                                                                          |
+| --------------- | -------------------------------------------------------------------------------- |
+| getModalView    | Modal state, or default state if not enabled                                     |
+| getModalType    | Modal type, that can be used as a key to find the right component to show        |
+| getModalContext | Modal context, a custom object associated to the actual modal type (can be null) |
+| isModalVisible  | Modal visibility, to determine when show or hide the Modal component             |
+
+<br>
+
+---
+
+## Integration with other plugins
+
+- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, just check the `enabledPlugins` parameter inside your `format` function for `modal`. If true, you can add your callbacks to `modal` field, that contains 2 fields:
+
+  - onModallClose : callbacks called everytime the modal is closed
+  - onModalOpen : callbacks called everytime the modal is opened
+
+<br>
+
+- Additionally, if you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the form type you want to open. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
 
 <br>
 
