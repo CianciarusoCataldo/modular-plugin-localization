@@ -13,7 +13,6 @@
  *
  */
 
-
 import { TFunction } from "react-i18next";
 
 /**
@@ -40,11 +39,9 @@ export const updateTitle = ({
 }) => {
   let name = appName ? appName.trim() : null;
 
-  let title = key && ns ? tFunction(key, { ns }).trim() : "";
+  let title = key && ns ? tFunction(key, { ns, defaultValue: " " }).trim() : "";
 
   const pageTitle = `${name || ""} ${name && title ? "-" : ""} ${title || ""}`;
 
-  if (pageTitle !== window.document.title) {
-    window.document.title = pageTitle;
-  }
+  window.document.title = pageTitle;
 };

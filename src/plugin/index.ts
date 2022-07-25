@@ -69,6 +69,8 @@ const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
     const language =
       computeValue(() => navigator.language.split("-")[0], "") || "";
 
+    let pending: string | null = null;
+
     return {
       reducer: (config) => ({
         slice: "localization",
@@ -78,13 +80,32 @@ const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
           language,
         },
       }),
-      field: (config) => ({
-        name: "localization",
-        content: fillObject({
+      field: (config) => {
+        const i18n = fillObject({
           toFill: config.localization,
           defaultObj: i18nDefaultSettings,
-        }),
-      }),
+        });
+        initi18n({ ...i18n, language }, (t) => {
+          if (pending) {
+            updateTitle({
+              tFunction: t,
+              key: pending,
+              ns: i18n.titlesNamespace,
+              appName: config.appName,
+            });
+
+            pending = null;
+          }
+        });
+
+        return {
+          name: "localization",
+          content: fillObject({
+            toFill: config.localization,
+            defaultObj: i18nDefaultSettings,
+          }),
+        };
+      },
       interactions: [
         {
           plugin: "urlChecker",
@@ -103,27 +124,31 @@ const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
         {
           plugin: "router",
           effect: (field, config) => {
-            let inputConfig = config || {};
-            let i18n = inputConfig.localization || i18nDefaultSettings;
+            let i18n = config.localization || i18nDefaultSettings;
 
             const ns = i18n.titlesNamespace || "";
 
-            initi18n({ ...i18n, language }, (t) => {
+            if (i18nInstance.isInitialized) {
+              pending = null;
+
               updateTitle({
-                tFunction: t,
-                key: config.router.initialRouteKey,
+                tFunction: i18nInstance.t,
+                key: field.initialRouteKey,
                 ns,
-                appName: inputConfig.appName,
+                appName: config.appName,
               });
-            });
+            } else {
+              pending = field.initialRouteKey;
+            }
 
             field.onLocationChange.push((path, routeKey) => {
-              updateTitle({
-                key: routeKey,
-                ns,
-                appName: inputConfig.appName,
-                tFunction: i18nInstance.t,
-              });
+              i18nInstance.isInitialized &&
+                updateTitle({
+                  key: routeKey,
+                  ns,
+                  appName: config.appName,
+                  tFunction: i18nInstance.t,
+                });
             });
 
             return field;
@@ -141,17 +166,19 @@ const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
                   state.localization.supportedLanguages.includes(
                     action.payload.language
                   ) &&
+                    i18nInstance.isInitialized &&
                     setI18nLanguage({
                       language: action.payload.language,
-                      callback: (t) =>
-                        config.router &&
-                        config.router.routeKey &&
-                        updateTitle({
-                          key: state.router.routeKey,
-                          tFunction: t,
-                          appName: state.config.appName,
-                          ns: state.localization.titlesNamespace,
-                        }),
+                      callback: (t) => {
+                        state.router &&
+                          state.router.routeKey &&
+                          updateTitle({
+                            key: state.router.routeKey,
+                            tFunction: t,
+                            appName: config.appName,
+                            ns: config.localization.titlesNamespace,
+                          });
+                      },
                     });
                 }
                 break;

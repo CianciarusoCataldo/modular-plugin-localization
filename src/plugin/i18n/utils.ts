@@ -107,7 +107,7 @@ export const initi18n = (
       interpolation: {
         escapeValue: false,
       },
-      react: { useSuspense: false },
+      react: { useSuspense: true },
     })
     .then((t) => {
       callBack && callBack(t);
