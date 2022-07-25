@@ -30,11 +30,13 @@ export type LocalizationPluginState = ModularEngineCustomState<
 >;
 
 export type LocalizationPluginSettings = {
-  localization?: LocalizationPluginI18nSettings;
+  localization?: LocalizationPluginI18nSettings & {
+    onLanguageChange?: ((lang: string) => void)[];
+  };
 };
 
 /**
- * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) [i18n](https://www.i18next.com/) 
+ * [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) [i18n](https://www.i18next.com/)
  * settings type definitions
  *
  * @see https://github.com/CianciarusoCataldo/modular-plugin-localization

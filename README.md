@@ -108,6 +108,20 @@ export const CustomComponent = () => {
 
 With the plugin itself, some other useful selectors and actions are exported by this lib, to easily work with any component
 
+### Config
+
+This plugin adds a custom field inside the modular-engine config, localization. This new field contains some configuration options, used by [i18-next](https://www.i18next.com/):
+
+- `onLanguageChange` : callbacks called everytime the language is changed
+- `namespaces` : i18next preloaded namespaces
+- `supportedLanguages` : i18next preloaded namespaces
+- `fallbackLanguage`: default language, used when a copy is not available in a specific language
+- `loadPath`: copies JSON files path
+- `defaultNamespace`: default i18next namespace
+- `titlesNamespace`: namespaces specifically used to determine page titles (to be used with [router plugin](https://github.com/cianciarusocataldo/modular-plugin-router))
+
+Check the [usage](#usage) section for a real example
+
 ### Actions
 
 | Action creator   | Arguments                 | Effect                 |
@@ -199,9 +213,28 @@ export const LocalizationDebugComponent = () => {
 
 ## Integration with other plugins
 
-- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, just check the `enabledPlugins` parameter inside your `format` function for `localization`. If true, you can add your callbacks to `localization` field, that contains 1 field:
+- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, you can add an `interaction` with `localization` plugin inside your custom plugin:
 
-  - onLanguageChange : callbacks called everytime the language is changed
+```tsx
+//Just a skeleton of a custom plugin that interacts with router plugin
+const customPlugin = () => ({
+  // Custom plugin stuffs
+
+  interactions: [
+    {
+      plugin: "localization",
+      effect: (localizationConfig) => {
+        // Custom plugin stuffs
+
+        //Add the custom callback
+        localizationConfig.onLanguageChange.push(() => {
+          alert("language changed");
+        });
+      },
+    },
+  ],
+});
+```
 
 <br>
 

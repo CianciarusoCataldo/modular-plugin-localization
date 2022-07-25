@@ -25,6 +25,7 @@ import { LocalizationPlugin } from "./types";
 import { updateTitle } from "./helper";
 import * as actions from "./actions";
 import localizationReducer from "./reducer";
+import { createModularEnginePlugin } from "modular-engine-tools";
 
 /**
  * Improve [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) system with a fully working localization system, with multi-language support, based on [118next](https://www.i18next.com/)
@@ -62,101 +63,106 @@ import localizationReducer from "./reducer";
  * @copyright Cataldo Cianciaruso 2022
  *
  */
-const localizationPlugin: LocalizationPlugin = () => {
-  const language =
-    computeValue(() => navigator.language.split("-")[0], "") || "";
+const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
+  "localization",
+  () => {
+    const language =
+      computeValue(() => navigator.language.split("-")[0], "") || "";
 
-  return {
-    feature: "localization",
-    redux: (config) => ({
-      slice: "localization",
-      effects: localizationReducer,
-      initialState: {
-        ...config.localization,
-        language,
-      },
-    }),
-    create: (config) => ({
-      field: "localization",
-      content: fillObject({
-        toFill: config.localization,
-        defaultObj: i18nDefaultSettings,
+    return {
+      reducer: (config) => ({
+        slice: "localization",
+        effects: localizationReducer,
+        initialState: {
+          ...config.localization,
+          language,
+        },
       }),
-    }),
+      field: (config) => ({
+        name: "localization",
+        content: fillObject({
+          toFill: config.localization,
+          defaultObj: i18nDefaultSettings,
+        }),
+      }),
+      interactions: [
+        {
+          plugin: "urlChecker",
+          effect: (field, config) => {
+            field.queryParameters["lang"] = ({ store, urlParam, config }) => {
+              store.dispatch(actions.changeLanguage(urlParam));
 
-    format: (config, enabledPlugins) => {
-      let inputConfig = config || {};
-      let i18n = inputConfig.localization || i18nDefaultSettings;
+              return config;
+            };
 
-      const ns = i18n.titlesNamespace || "";
+            field.after.push("lang");
 
-      let callBack;
+            return field;
+          },
+        },
+        {
+          plugin: "router",
+          effect: (field, config) => {
+            let inputConfig = config || {};
+            let i18n = inputConfig.localization || i18nDefaultSettings;
 
-      if (enabledPlugins.router) {
-        callBack = (t) => {
-          updateTitle({
-            tFunction: t,
-            key: config.router.initialRouteKey,
-            ns,
-            appName: inputConfig.appName,
-          });
-        };
-      }
+            const ns = i18n.titlesNamespace || "";
 
-      initi18n({ ...i18n, language }, callBack);
+            let callBack = (t) => {
+              updateTitle({
+                tFunction: t,
+                key: config.router.initialRouteKey,
+                ns,
+                appName: inputConfig.appName,
+              });
+            };
 
-      enabledPlugins.router &&
-        inputConfig.router.onLocationChange.push((path, routeKey) => {
-          updateTitle({
-            key: routeKey,
-            ns,
-            appName: inputConfig.appName,
-            tFunction: i18nInstance.t,
-          });
-        });
+            initi18n({ ...i18n, language }, callBack);
 
-      inputConfig.redux?.middlewares?.push((action, store) => {
-        const state = store.getState();
+            field.onLocationChange.push((path, routeKey) => {
+              updateTitle({
+                key: routeKey,
+                ns,
+                appName: inputConfig.appName,
+                tFunction: i18nInstance.t,
+              });
+            });
 
-        switch (action.type) {
-          case actions.changeLanguage.type:
-            {
-              state.localization.supportedLanguages.includes(
-                action.payload.language
-              ) &&
-                setI18nLanguage({
-                  language: action.payload.language,
-                  callback: (t) =>
-                    enabledPlugins.router &&
-                    updateTitle({
-                      key: state.router.routeKey,
-                      tFunction: t,
-                      appName: state.config.appName,
-                      ns: state.localization.titlesNamespace,
-                    }),
-                });
+            return field;
+          },
+        },
+      ],
+      middlewares: (config) => ({
+        middlewares: [
+          (action, store) => {
+            const state = store.getState();
+
+            switch (action.type) {
+              case actions.changeLanguage.type:
+                {
+                  state.localization.supportedLanguages.includes(
+                    action.payload.language
+                  ) &&
+                    setI18nLanguage({
+                      language: action.payload.language,
+                      callback: (t) =>
+                        config.router &&
+                        config.router.routeKey &&
+                        updateTitle({
+                          key: state.router.routeKey,
+                          tFunction: t,
+                          appName: state.config.appName,
+                          ns: state.localization.titlesNamespace,
+                        }),
+                    });
+                }
+                break;
             }
-            break;
-        }
-      });
-
-      if (enabledPlugins.urlChecker) {
-        inputConfig.urlChecker.queryParameters["lang"] = ({
-          store,
-          urlParam,
-          config,
-        }) => {
-          store.dispatch(actions.changeLanguage(urlParam));
-
-          return config;
-        };
-
-        config.urlChecker.after.push("lang");
-      }
-
-      return inputConfig;
-    },
-  };
-};
+          },
+        ],
+      }),
+    };
+  }
+);
 
 export default localizationPlugin;

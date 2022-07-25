@@ -91,6 +91,20 @@ export const CustomComponent = () => {
 
 With the plugin itself, some other useful selectors and actions are exported by this lib, to easily work with any component
 
+### Config
+
+This plugin adds a custom field inside the modular-engine config, localization. This new field contains some configuration options, used by [i18-next](https://www.i18next.com/):
+
+- `onLanguageChange` : callbacks called everytime the language is changed
+- `namespaces` : i18next preloaded namespaces
+- `supportedLanguages` : i18next preloaded namespaces
+- `fallbackLanguage`: default language, used when a copy is not available in a specific language
+- `loadPath`: copies JSON files path
+- `defaultNamespace`: default i18next namespace
+- `titlesNamespace`: namespaces specifically used to determine page titles (expecially when used with `router` plugin)
+
+Check the [usage](#usage) section for a real example
+
 ### Actions
 
 | Action creator   | Arguments                 | Effect                 |
@@ -161,6 +175,8 @@ Then use them from any part of your app:
 import { getLanguage, getLanguages } from "modular-plugin-localization";
 import { useSelector } from "react-redux";
 
+import { Button } from "modular-ui-components";
+
 export const LocalizationDebugComponent = () => {
   const language = useSelector(getLanguage);
   const languages = useSelector(getLanguages);
@@ -180,7 +196,32 @@ export const LocalizationDebugComponent = () => {
 
 ## Integration with other plugins
 
-- If you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the language you want to set. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
+- This plugin expose some fields to work with any other plugin. If you want to interact with it, using your custom plugin, you can add an `interaction` with `localization` plugin inside your custom plugin:
+
+```tsx
+//Just a skeleton of a custom plugin that interacts with router plugin
+const customPlugin = () => ({
+  // Custom plugin stuffs
+
+  interactions: [
+    {
+      plugin: "localization",
+      effect: (localizationConfig) => {
+        // Custom plugin stuffs
+
+        //Add the custom callback
+        localizationConfig.onLanguageChange.push(() => {
+          alert("language changed");
+        });
+      },
+    },
+  ],
+});
+```
+
+<br>
+
+- Additionally, if you use [modular-plugin-url-checker](https://github.com/CianciarusoCataldo/modular-pluginurl-checker) too, you can change the language directly from URL, with query parameters, by passing the `lang` parameter with the language you want to set. Try it with [modular-engine](https://github.com/CianciarusoCataldo/modular-engine) playground - https://cianciarusocataldo.github.io/modular-engine?lang=en
 
 <br>
 

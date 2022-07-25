@@ -12,7 +12,7 @@
  * @copyright Cataldo Cianciaruso 2022
  */
 
-import { createModularAction } from "modular-engine-tools";
+import { createModularEngineAction } from "modular-engine-tools";
 
 /**
  * Change [modular-plugin-localization](https://github.com/CianciarusoCataldo/modular-plugin-localization) localization language
@@ -27,7 +27,7 @@ import { createModularAction } from "modular-engine-tools";
  *
  * @copyright Cataldo Cianciaruso 2022
  */
-export const changeLanguage = createModularAction<{ language: string }>(
+export const changeLanguage = createModularEngineAction<{ language: string }>(
   "@@localization/LANGUAGE_CHANGE",
   (language) => ({
     language,

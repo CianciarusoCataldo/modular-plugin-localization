@@ -15,7 +15,7 @@
 
 import { ModularEngineGlobalState } from "modular-engine-types";
 
-import { createModularSelector } from "modular-engine-tools";
+import { createModularEngineSelector } from "modular-engine-tools";
 
 import { LocalizationPluginState } from "./types";
 import i18nDefaultSettings from "./i18n/default-settings";
@@ -54,7 +54,7 @@ export const getLocalizationConfig = (
  *
  * @copyright Cataldo Cianciaruso 2022
  */
-export const getLanguage = createModularSelector(
+export const getLanguage = createModularEngineSelector(
   getLocalizationConfig,
   (localization) => localization.language
 );
@@ -72,7 +72,7 @@ export const getLanguage = createModularSelector(
  *
  * @copyright Cataldo Cianciaruso 2022
  */
-export const getLanguages = createModularSelector(
+export const getLanguages = createModularEngineSelector(
   getLocalizationConfig,
   ({ supportedLanguages }) => supportedLanguages
 );
