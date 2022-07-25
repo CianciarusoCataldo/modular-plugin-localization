@@ -108,16 +108,14 @@ const localizationPlugin: LocalizationPlugin = createModularEnginePlugin(
 
             const ns = i18n.titlesNamespace || "";
 
-            let callBack = (t) => {
+            initi18n({ ...i18n, language }, (t) => {
               updateTitle({
                 tFunction: t,
                 key: config.router.initialRouteKey,
                 ns,
                 appName: inputConfig.appName,
               });
-            };
-
-            initi18n({ ...i18n, language }, callBack);
+            });
 
             field.onLocationChange.push((path, routeKey) => {
               updateTitle({
